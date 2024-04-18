@@ -1,39 +1,18 @@
 import { FunctionComponent, Key, useCallback, useEffect } from "react";
 import Wrapper from "../components/Wrapper";
 import { useStore } from "../store";
-import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
-import { get } from 'lodash'
-import { Task as InterfaceTask } from "../api/domain/Task";
+import { Button } from "@nextui-org/react";
+import { TablesAccordion } from "../components/TablesAccordion";
+import { CollectionsTable } from "../components/CollectionsTable";
+import { TaskDetails } from "../components/TaskDetails";
 
 interface Props {}
 
 
-const columns = [
-  {
-    key: "name",
-    label: "NAME",
-  },
-  {
-    key: "id",
-    label: "ID",
-  },
-  {
-    key: "vdaf.type",
-    label: "TYPE",
-  },
-  {
-    key: "actions",
-    label: "ACTIONS",
-  },
-];
-
-
 export const Main: FunctionComponent<Props> = () => {
-  const { fetchTasks, tasks, loadingTasks } = useStore()
+  const { fetchTasks, fetchJobs, loadingTasks } = useStore()
 
   useEffect(() => {
-
-
     // setInterval(async() => {
     //   if (window.divviup) {
     //     const task = new window.divviup.dap.Task({
@@ -51,61 +30,36 @@ export const Main: FunctionComponent<Props> = () => {
     // }, 1000)
 
     fetchTasks()  
+    fetchJobs()
   }, [])
 
-  const renderCell = useCallback((item: InterfaceTask, columnKey: Key) => {
-    const cellValue = get(item, columnKey + '')
-
-    switch (columnKey) {
-      case "actions":
-        return (
-          <Button 
-            color="primary"
-            variant="light"
-            onPress={() => {
-              console.log('do something')
-            }}
-          >
-            Collector info
-          </Button>
-        )
-      default:
-        return cellValue
-    }
-  }, [])
 
   return (
     <Wrapper>
-      <div className="flex items-center">
-        <h1 className="text-xl">Tasks</h1>
+      <div >
 
-        <div className="p-unit-md">
-          <Button
-            isLoading={loadingTasks} 
-            color="primary"
-            onPress={fetchTasks}
-          >
-            Refresh
-          </Button>
+        <div>
+          <div className="py-4">
+            <h1 className="text-xl">Tasks scheduled for collection</h1>
+          </div>
+
+          <CollectionsTable />
         </div>
 
+        <div className="py-4">
+          <TablesAccordion />
+        </div>
+
+        <div>
+          <div className="py-4">
+            <h1 className="text-xl">Select a task for collection details</h1>
+          </div>
+          <TaskDetails />
+        </div>
+        
       </div>
 
-      <div>
-        <Table aria-label="Example table with dynamic content">
-          <TableHeader columns={columns}>
-            {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-          </TableHeader>
-          <TableBody items={tasks}>
-            {(item) => (
-              <TableRow key={item.id}>
-                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
 
-      </div>
 
     </Wrapper>
   )

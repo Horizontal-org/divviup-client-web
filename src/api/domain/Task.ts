@@ -7,4 +7,5 @@ export interface Task {
   name: string;
   collector_credential_id: string;
   vdaf: Vdaf
+  starred: boolean
 }
