@@ -6,10 +6,12 @@ interface Props {}
 
 export const TablesAccordion:FunctionComponent<Props> = () => {
   return (
-    <Accordion variant="bordered">
+    <div>
+    {/* <Accordion variant="shadow">
       <AccordionItem key="1" aria-label="All tasks" title="All tasks">
         <AllItemsTable />
       </AccordionItem>        
-    </Accordion>
+    </Accordion> */}
+    </div>
   )
 }

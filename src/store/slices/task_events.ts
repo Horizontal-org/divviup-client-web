@@ -1,6 +1,4 @@
 import { StateCreator } from "zustand"
-import { fetchTasks } from "../../api/fetch/tasks"
-import { enqueueSnackbar } from "notistack"
 import { TaskEvent } from "../../api/domain/TaskEvent"
 import { fetchTasksEvents } from "../../api/fetch/task_events"
 import { Task } from "../../api/domain/Task"
@@ -34,7 +32,7 @@ const aggregateEvents = (events: TaskEvent[], task: Task) => {
 
     sortedEvents.forEach((se) => {
       if (se.value && se.value.length > 0) {
-        consolidatedNumber = se.value
+        consolidatedNumber = parseInt(consolidatedNumber.length > 0 ? consolidatedNumber : '0') + parseInt(se.value) + ''
       }
     })
   }

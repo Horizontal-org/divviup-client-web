@@ -1,11 +1,13 @@
 import { FunctionComponent, Key, useCallback } from "react";
 import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { get } from "lodash";
-import { Task as InterfaceTask } from "../../api/domain/Task";
+import { Task as InterfaceTask, Task } from "../../api/domain/Task";
 import { useStore } from "../../store";
 
 
-interface Props {}
+interface Props {
+  onSelect: (task: Task) => void
+}
 
 
 const columns = [
@@ -29,7 +31,7 @@ const columns = [
 
 
 
-export const AllItemsTable:FunctionComponent<Props> = () => {
+export const AllItemsTable:FunctionComponent<Props> = ({onSelect}) => {
   const { tasks, fetchTasks, loadingTasks, addToCollector, removeFromCollector } = useStore()
 
 
@@ -39,20 +41,32 @@ export const AllItemsTable:FunctionComponent<Props> = () => {
     switch (columnKey) {
       case "actions":
         return (
-          <Button 
-            color="primary"
-            variant="light"
-            onPress={() => {
-              console.log('do something')
-              if (item.starred) {
-                removeFromCollector(item.id)
-              } else {
-                addToCollector(item.id)
-              }
-            }}
-          >
-            {item.starred ? "Remove from Collector" : "Add to Collector"}
-          </Button>
+          <div className="flex items-center">
+            <div className="pr-4">
+              <Button 
+                color="primary"
+                variant="ghost"
+                onPress={() => {
+                  onSelect(item)
+                }}
+              >
+                Show data
+              </Button>  
+            </div>
+            <Button 
+              color="primary"
+              variant="light"
+              onPress={() => {
+                if (item.starred) {
+                  removeFromCollector(item.id)
+                } else {
+                  addToCollector(item.id)
+                }
+              }}
+            >
+              {item.starred ? "Remove from Collector" : "Add to Collector"}
+            </Button>
+          </div>
         )
       default:
         return cellValue
@@ -63,18 +77,20 @@ export const AllItemsTable:FunctionComponent<Props> = () => {
   return (
 
     <div>
-      <div className="pb-4">
-        <Button
-          isLoading={loadingTasks} 
-          color="primary"
-          onPress={fetchTasks}
-        >
-          Re-Sync
-        </Button>
+      <div className="py-4 flex items-center">
+        <h1 className="text-xl pr-4">All tasks</h1>
+        <div >
+          <Button
+            isLoading={loadingTasks} 
+            color="primary"
+            onPress={fetchTasks}
+          >
+            Re-Sync
+          </Button>
+        </div>
       </div>
 
       <Table 
-        removeWrapper={true}
       >      
         <TableHeader columns={columns}>
           {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}

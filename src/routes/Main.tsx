@@ -1,32 +1,68 @@
-import { FunctionComponent, Key, useCallback, useEffect } from "react";
+import { FunctionComponent, Key, useCallback, useEffect, useState } from "react";
 import Wrapper from "../components/Wrapper";
 import { useStore } from "../store";
-import { Button } from "@nextui-org/react";
-import { TablesAccordion } from "../components/TablesAccordion";
 import { CollectionsTable } from "../components/CollectionsTable";
 import { TaskDetails } from "../components/TaskDetails";
+import { AllItemsTable } from "../components/AllItemsTable";
+import { SelectedTask } from "../components/SelectedTask";
+import { Task as InterfaceTask } from "../api/domain/Task";
+import {Task} from "@divviup/dap/dist/task";
 
 interface Props {}
 
 
 export const Main: FunctionComponent<Props> = () => {
-  const { fetchTasks, fetchJobs, loadingTasks } = useStore()
+  const { fetchTasks, fetchJobs, fetchEvents } = useStore()
+  const [selected, onSelect] = useState<InterfaceTask | null>(null)
 
   useEffect(() => {
+    // COUNT
     // setInterval(async() => {
-    //   if (window.divviup) {
-    //     const task = new window.divviup.dap.Task({
-    //       type: "count",
-    //       id: "19tPTIP7gYq2mcDvyq62aUGg_PSWB17QDvaVbGb5tFI",
-    //       leader: "https://dap-07-1.api.divviup.org/",
-    //       helper: "https://helper-dap-09.shira.app/",
-    //       timePrecisionSeconds: 60
-    //     });
-        
-    //     await task.sendMeasurement(true);
-    //     console.log('sent;')
-    //   }
+    //   const task = new Task({
+    //     type: "count",
+    //     id: "uRn1hMZ6ZmgiSY_2kalj-vMx7yh980B4yqnnwWQpTL0",
+    //     leader: "https://dap-09-3.api.divviup.org/",
+    //     helper: "https://helper-dap-09.shira.app/",
+    //     timePrecisionSeconds: 300
+    //   });
+    //   await task.sendMeasurement(true); // your measurement here
+    //   console.log('sent;')        
+    // }, 1000)
 
+    // SUM
+    // setInterval(async() => {
+    //   const randomNumber = Math.floor(Math.random() * (70 - 1) + 1)
+    //   console.log("🚀 ~ setInterval ~ randomNumber:", randomNumber)
+    //   const task = new Task({
+    //     type: "sum",
+    //     bits: 16,
+    //     id: "YbeubXWNyvoQj1Xh5UnwNcqB2gpDaakwp1lDdIadz5w",
+    //     leader: "https://dap-09-3.api.divviup.org/",
+    //     helper: "https://helper-dap-09.shira.app/",
+    //     timePrecisionSeconds: 300
+    //   });
+  
+    //   await task.sendMeasurement(randomNumber); // your measurement here
+    // }, 1000)
+
+    // HISTOGRAM
+    // setInterval(async() => {
+    //   const task = new Task({
+    //     type: "histogram",
+    //     // buckets: [
+    //     //   1,
+    //     //   5,
+    //     //   10
+    //     // ],
+    //     chunkLength: 2,
+    //     length: 3,
+    //     id: "FMIysxUN7hE97ILtENO4LjerGueMxMULOVg2d8HAdh8",
+    //     leader: "https://dap-09-3.api.divviup.org/",
+    //     helper: "https://helper-dap-09.shira.app/",
+    //     timePrecisionSeconds: 300
+    //   });
+  
+    //   await task.sendMeasurement(2); // your measurement here
     // }, 1000)
 
     fetchTasks()  
@@ -36,31 +72,33 @@ export const Main: FunctionComponent<Props> = () => {
 
   return (
     <Wrapper>
-      <div >
+      <div>
+
+        { selected && (
+          <SelectedTask 
+            task={selected}
+            onClose={() => {
+              onSelect(null)
+            }}
+          />
+        )}
 
         <div>
           <div className="py-4">
             <h1 className="text-xl">Tasks scheduled for collection</h1>
           </div>
-
           <CollectionsTable />
         </div>
 
         <div className="py-4">
-          <TablesAccordion />
+          <AllItemsTable 
+            onSelect={(task) => {
+              fetchEvents(task)
+              onSelect(task)
+            }}
+          />
         </div>
-
-        <div>
-          <div className="py-4">
-            <h1 className="text-xl">Select a task for collection details</h1>
-          </div>
-          <TaskDetails />
-        </div>
-        
       </div>
-
-
-
     </Wrapper>
   )
 }

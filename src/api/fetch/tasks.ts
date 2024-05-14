@@ -31,3 +31,16 @@ export const removeFromCollector = async(taskId: string) => {
     console.log("🚀 ~ fetchTasks ~ err:", err)
   }
 }
+
+export const runManually = async(taskId: number, divviupId: string, type: string) => {
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_DIVVIUP_CLIENT}/collector/manual`, {
+      "task_id": taskId,
+      "divviup_id": divviupId,
+      "type": type
+    })
+    return res.data
+  } catch (err) {
+    console.log("🚀 ~ runManually ~ err:", err)    
+  }
+}

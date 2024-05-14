@@ -1,10 +1,19 @@
 import { FunctionComponent, Key, useCallback } from 'react'
 import { useStore } from '../../store'
-import { Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
-import { get } from 'lodash'
-import { TaskEvent as InterfaceTaskEvent } from "../../api/domain/TaskEvent";
+import { Accordion, AccordionItem, Button, CircularProgress, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import { fill, get } from 'lodash'
+import { TaskEvent } from "../../api/domain/TaskEvent";
+import { Task } from '../../api/domain/Task';
+import styled from 'styled-components';
+import { HiXCircle, HiCheckCircle } from "react-icons/hi";
 
-interface Props {}
+interface Props {
+  task: Task
+  loading: boolean
+  events: TaskEvent[]
+  total: string
+  onClose: () => void
+}
 
 
 const columns = [
@@ -24,79 +33,72 @@ const columns = [
 ];
 
 
-export const TaskDetails:FunctionComponent<Props> = () => {
-  const { tasks, events, consolidated, loadingEvents, fetchEvents} = useStore()
-
-  console.log("🚀 ~ events:", events)
-  console.log("🚀 ~ consolidated:", consolidated)
-
-  const renderCell = useCallback((item: InterfaceTaskEvent, columnKey: Key) => {
-    const cellValue = get(item, columnKey + '')
-    switch (columnKey) {      
-      case "created_at":
-        return new Date(item.created_at).toLocaleString()
-      default:
-        return cellValue
-    }
-
-  }, [])
+export const TaskDetails:FunctionComponent<Props> = ({
+  task,
+  events,
+  loading,
+  total,
+  onClose
+}) => {
 
   return (
-    <div>
-      <div className='flex items-center py-4'>
-        <Select 
-          variant={'bordered'}
-          label="Select a task" 
-          className="max-w-xs" 
-          onChange={(e) => {
-            const task = tasks.find(t => t.name === e.target.value)
-            if (task) {
-              fetchEvents(task)
-            }
-          }}
-        >
-          {tasks.map((t) => (
-            <SelectItem key={t.name} value={t.name}>
-              {t.name}
-            </SelectItem>
-          ))}
-        </Select>
-        
-        { loadingEvents && (
-          <div className='flex items-center'>
-            <h1 className="text-l p-4">Loading</h1>
-            <Spinner />
-          </div>
-        )}
+    <Wrapper>
+
+      <div className='flex justify-between items-center'>
+        <h1 className='text-xl'>
+          { task.name }
+        </h1>
+        <Button 
+        color="primary"
+        variant="ghost"
+        onPress={onClose}
+        >Close</Button>
       </div>
-      
-      
-      { events && events.length > 0 && (
+      {
+        loading && (
+          <div className='py-8 flex items-center'>
+            <h1 className='text-xl pr-8'>
+              Loading...
+            </h1>
+            <CircularProgress color="primary" aria-label="Loading..."/>
+          </div>
+        )
+      }
+      { !loading && events && events.length > 0 && (
          <div>
     
           <div>
-            <h1 className="text-l p-4">{`Total number: ${consolidated}`}</h1>
+            <h1 className="text-l py-4 font-bold">{`Total number: ${total}`}</h1>
           </div>
 
-          <Table>
-            <TableHeader columns={columns}>
-              {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
-            </TableHeader>
-            <TableBody 
-              items={events}
-              emptyContent={loadingEvents ? 'Loading...' : 'No tasks to collect'}
-            >
-              {(item) => (
-                <TableRow key={item.id}>
-                  {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <Accordion>
+            { events.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime() ).map((e) => (
+              <AccordionItem
+                title={new Date(e.created_at).toLocaleString()}
+                startContent={e.success ? (
+                  <HiCheckCircle color="#5cb85c"/>
+                ) : (
+                  <HiXCircle color="#ed4337"/>
+                )}
+              >
+                <div className='pl-8'>
+                  { e.output.split(/\n/g).map((i) => (
+                    <p>{i}</p>
+                  )) }
+                </div>
+              </AccordionItem>
+            ))}
+          </Accordion>
+       
         </div>
       )}
-    </div>
+    </Wrapper>
   )
 }
 
-
+const Wrapper = styled.div`
+  border-radius: 4px;
+  padding: 24px;
+  background: white;
+  min-height: 100%;
+`

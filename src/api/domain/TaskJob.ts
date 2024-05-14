@@ -4,4 +4,6 @@ export interface TaskJob {
   cron: string;
   task_name: string;
   task_type: string;
+  divviup_id: string;
+  task_id: number
 }

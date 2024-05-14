@@ -5,6 +5,7 @@ import { TaskJob as InterfaceTaskJob } from "../../api/domain/TaskJob";
 import { useStore } from "../../store";
 import cronstrue from 'cronstrue'
 import { enqueueSnackbar } from "notistack";
+import { runManually } from "../../api/fetch/tasks";
 
 interface Props {}
 
@@ -31,7 +32,7 @@ const columns = [
 
 
 export const CollectionsTable:FunctionComponent<Props> = () => {
-  const { jobs, loadingJobs} = useStore()
+  const { jobs, loadingJobs, tasks} = useStore()
 
   const renderCell = useCallback((item: InterfaceTaskJob, columnKey: Key) => {
     const cellValue = get(item, columnKey + '')
@@ -42,8 +43,11 @@ export const CollectionsTable:FunctionComponent<Props> = () => {
           <Button 
             color="primary"
             variant="light"
-            onPress={() => {
-              enqueueSnackbar('Run manually')
+            onPress={async() => {
+              console.log(item)
+              enqueueSnackbar('Running collector manually')
+              await runManually(item.task_id, item.divviup_id, item.task_type)
+              enqueueSnackbar('Collector runned')
             }}
           >
             Run manually
