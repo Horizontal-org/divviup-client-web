@@ -15,24 +15,6 @@ interface Props {
   onClose: () => void
 }
 
-
-const columns = [
-  {
-    key: "value",
-    label: "Value",
-  },  
-  {
-    key: "error",
-    label: "Error",
-  },
-  
-  {
-    key: "created_at",
-    label: "Run at",
-  },  
-];
-
-
 export const TaskDetails:FunctionComponent<Props> = ({
   task,
   events,
@@ -91,7 +73,7 @@ export const TaskDetails:FunctionComponent<Props> = ({
           </Accordion>
        
         </div>
-      )}
+      )}-
     </Wrapper>
   )
 }

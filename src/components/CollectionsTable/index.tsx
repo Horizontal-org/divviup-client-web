@@ -32,7 +32,7 @@ const columns = [
 
 
 export const CollectionsTable:FunctionComponent<Props> = () => {
-  const { jobs, loadingJobs, tasks} = useStore()
+  const { jobs, loadingJobs } = useStore()
 
   const renderCell = useCallback((item: InterfaceTaskJob, columnKey: Key) => {
     const cellValue = get(item, columnKey + '')
@@ -62,7 +62,6 @@ export const CollectionsTable:FunctionComponent<Props> = () => {
 
   
   return (
-
     <div>
       <Table 
         hideHeader={true}
