@@ -1,7 +1,5 @@
-import { FunctionComponent, Key, useCallback } from 'react'
-import { useStore } from '../../store'
-import { Accordion, AccordionItem, Button, CircularProgress, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
-import { fill, get } from 'lodash'
+import { FunctionComponent } from 'react'
+import { Accordion, AccordionItem, Button, CircularProgress } from '@nextui-org/react'
 import { TaskEvent } from "../../api/domain/TaskEvent";
 import { Task } from '../../api/domain/Task';
 import styled from 'styled-components';

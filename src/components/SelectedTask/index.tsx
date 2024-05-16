@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent } from "react";
 import styled from 'styled-components'
 import { TaskDetails } from "../TaskDetails";
 import { Task } from "../../api/domain/Task";

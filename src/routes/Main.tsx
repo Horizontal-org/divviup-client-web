@@ -1,4 +1,4 @@
-import { FunctionComponent, Key, useCallback, useEffect, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import Wrapper from "../components/Wrapper";
 import { MainScreen } from "../components/MainScreen";
 import { LoginScreen } from "../components/LoginScreen";
